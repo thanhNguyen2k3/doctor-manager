@@ -1,0 +1,138 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Account {
+    id                String  @id @default(cuid())
+    userId            String  @map("user_id")
+    type              String
+    provider          String
+    providerAccountId String  @map("provider_account_id")
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+    @@map("accounts")
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique @map("session_token")
+    userId       String   @map("user_id")
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("sessions")
+}
+
+model User {
+    id       String  @id @default(cuid())
+    name     String?
+    email    String? @unique
+    password String
+
+    first_name    String?
+    last_name     String?
+    phone         String?
+    address       String?
+    role          String    @default("staff")
+    join_date     DateTime? @default(now())
+    gender        String?   @default("male")
+    date_of_birth DateTime?
+    active        Boolean   @default(true)
+
+    department_id String?
+    department    Department? @relation(fields: [department_id], references: [id])
+
+    emailVerified DateTime? @map("email_verified")
+    image         String?
+
+    appointment   Appointment[]
+    accounts      Account[]
+    sessions      Session[]
+    manageOfStaff ManageOfStaff[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("users")
+}
+
+model VerificationToken {
+    identifier String
+    token      String
+    expires    DateTime
+
+    @@unique([identifier, token])
+    @@map("verificationtokens")
+}
+
+model Department {
+    id      String           @id @default(cuid())
+    name    String
+    users   User[]
+    special Specialization[]
+}
+
+model Specialization {
+    id            String     @id @default(cuid())
+    name          String
+    department_id String
+    department    Department @relation(fields: [department_id], references: [id])
+}
+
+model ManageOfStaff {
+    id       String  @id @default(cuid())
+    staff_id String?
+    staff    User?   @relation(fields: [staff_id], references: [id])
+}
+
+model Appointment {
+    id String @id @default(cuid())
+
+    appointment_number String?
+
+    doctor_id  String?
+    doctor     User?    @relation(fields: [doctor_id], references: [id])
+    patient_id String?
+    patient    Patient? @relation(fields: [patient_id], references: [id])
+
+    appointment_time       String?
+    appointment_date       DateTime?
+    appointment_department String?
+    appointment_room       String?
+    note                   String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Patient {
+    id                    String    @id @default(cuid())
+    name                  String
+    date_of_birth         DateTime?
+    card_id               String?
+    phone                 String?
+    address               String?
+    health_condition      String?
+    disease               String?
+    health_insurance_card String?
+
+    appointment Appointment[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
