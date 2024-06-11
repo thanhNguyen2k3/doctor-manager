@@ -1,9 +1,6 @@
 'use client';
 
-import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useMemo, useState } from 'react';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-
-import { Theme, createTheme } from '@mui/material/styles';
+import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react';
 
 interface ThemeContextProps {
     isDarkMode: boolean;
@@ -15,30 +12,6 @@ interface ToggleSidebarProps {
     toggleSidebar: () => void;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
-
-const lightTheme = createTheme({
-    palette: {
-        mode: 'light',
-        primary: {
-            main: '#1976d2',
-        },
-        secondary: {
-            main: '#dc004e',
-        },
-    },
-});
-
-const darkTheme = createTheme({
-    palette: {
-        mode: 'dark',
-        primary: {
-            main: '#90caf9',
-        },
-        secondary: {
-            main: '#f48fb1',
-        },
-    },
-});
 
 type Props = {
     children: ReactNode;
@@ -60,14 +33,15 @@ const Provider = ({ children }: Props) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [showChild, setShowChild] = useState<boolean>(false);
 
+    // Check pathname with role
+
     useEffect(() => {
         setShowChild(true);
     }, []);
 
-    const theme: Theme = useMemo(() => (isDarkMode ? darkTheme : lightTheme), [isDarkMode]);
-
     const toggleTheme = () => {
         setIsDarkMode(!isDarkMode);
+        document.body.classList.toggle('dark');
     };
 
     const toggleSidebar = () => {
@@ -83,12 +57,7 @@ const Provider = ({ children }: Props) => {
     } else {
         return (
             <SidebarToggleContext.Provider value={{ isOpen, toggleSidebar, setIsOpen }}>
-                <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline />
-                        {children}
-                    </ThemeProvider>
-                </ThemeContext.Provider>
+                <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>{children}</ThemeContext.Provider>
             </SidebarToggleContext.Provider>
         );
     }

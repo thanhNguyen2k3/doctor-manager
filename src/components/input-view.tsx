@@ -8,7 +8,7 @@ const InputView = (props: Props) => {
     return (
         <input
             disabled
-            className="outline-none block w-full py-3 px-4 border border-gray-400 rounded h-[56px] text-base font-medium"
+            className="outline-none block w-full py-3 px-4 border border-gray-200 rounded h-[56px] text-base font-medium"
             {...props}
         />
     );

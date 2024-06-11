@@ -18,12 +18,12 @@ const Page = async ({ params: { id } }: Params) => {
     });
 
     return (
-        <div className="bg-white shadow p-6">
+        <div className="bg-white shadow-md p-6">
             <BackButton />
             <h1 className="text-[17px] font-semibold mb-5">
                 Bệnh nhân : <span>{data?.name}</span>
             </h1>
-            <form className="grid grid-cols-2 gap-x-3 gap-y-3">
+            <form className="grid md:grid-cols-2 grid-cols-1 gap-x-3 gap-y-3">
                 <input id="patient_id" name="patient_id" defaultValue={data?.id} hidden />
                 <FormControl label="Tên bệnh nhân">
                     <InputView defaultValue={data?.name} type="text" id="name" name="name" />

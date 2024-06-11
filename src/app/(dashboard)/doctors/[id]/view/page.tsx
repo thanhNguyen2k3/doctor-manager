@@ -2,6 +2,7 @@ import BackButton from '@/components/back-button';
 import FormControl from '@/components/form-control';
 import InputView from '@/components/input-view';
 import { db } from '@/lib/db';
+import { formatGender, formatRole } from '@/lib/format-global';
 import Image from 'next/image';
 
 type Params = {
@@ -22,22 +23,8 @@ const Page = async ({ params: { id } }: Params) => {
 
     const departments = await db.department.findMany();
 
-    const formatGender = (gender: string) => {
-        if (gender === 'male') return 'Nam';
-        if (gender === 'female') return 'Nữ';
-        if (gender === 'orther') return 'Giới tính thứ 3';
-    };
-
-    const formatRole = (role: string) => {
-        if (role === 'admin') return 'ADMIN';
-        if (role === 'doctor') return 'Bác sĩ';
-        if (role === 'staff') return 'Nhân viên';
-        if (role === 'manager') return 'Quản lý';
-        if (role === 'intern') return 'Thực tập sinh';
-    };
-
     return (
-        <div className="bg-white shadow shadow-primary w-[1200px] mx-auto max-w-full p-6">
+        <div className="bg-white shadow-md shadow-primary mx-auto max-w-full p-6">
             <BackButton />
             <h1 className="text-[17px] font-semibold mb-5">
                 Bác sĩ :{' '}
@@ -45,11 +32,11 @@ const Page = async ({ params: { id } }: Params) => {
                     {data?.first_name} {data?.last_name}
                 </span>
             </h1>
-            <div className="grid grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
                 <div className="col-span-1">
                     <Image width={200} height={260} src={`/uploads/${data?.image}` || ''} alt="Avatar" />
                 </div>
-                <div className="col-span-4 grid grid-cols-2 gap-3">
+                <div className="col-span-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                     <FormControl label="Họ">
                         <InputView
                             defaultValue={data?.first_name || ''}

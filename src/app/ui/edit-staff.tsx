@@ -28,8 +28,6 @@ const EditStaff = ({ data, departments }: Props) => {
 
     const [open, setOpen] = useState(false);
 
-    const router = useRouter();
-
     const message = state?.message;
     const url = state?.url;
 
@@ -50,10 +48,10 @@ const EditStaff = ({ data, departments }: Props) => {
             <BackButton />
 
             <h1 className="text-[17px] font-semibold mb-5">Sửa nhân viên</h1>
-            <div className="grid grid-cols-2 mb-4">
-                <div className="border border-dashed border-gray-400 w-[200px] h-auto p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 mb-4 gap-y-1">
+                <div className="border border-dashed border-gray-400 w-[200px] max-w-full h-auto p-4">
                     <Image
-                        src={!url ? '/doctor.png' : `/uploads/${!url ? data.image : url}`}
+                        src={url ? `/uploads/${url!}` : `/uploads/${data?.image}`}
                         width={300}
                         className="object-cover mb-4"
                         height={400}
@@ -61,7 +59,7 @@ const EditStaff = ({ data, departments }: Props) => {
                     />
                 </div>
 
-                <form action={action} className="flex mb-4 border-gray-400 p-4 max-w-full">
+                <form action={action} className="flex mb-4 border-gray-400 max-w-full">
                     <FormControl label="Ảnh đại diện">
                         <div className="flex flex-col gap-y-3">
                             <InputForm type="file" name="image" id="image" />
@@ -75,12 +73,12 @@ const EditStaff = ({ data, departments }: Props) => {
                 </form>
             </div>
             <form action={formAction}>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
                     <input
                         name="image"
                         id="image"
                         hidden
-                        value={url || data.image!}
+                        value={url ? url : data?.image!}
                         defaultValue={data?.image ? `${data?.image}` : ''}
                     />
                     <input type="text" value={data.id!} id="user_id" name="user_id" hidden />
@@ -108,13 +106,13 @@ const EditStaff = ({ data, departments }: Props) => {
                             placeholder="Địa chỉ email của bạn"
                         />
                     </FormControl>
-                    <FormControl errorField={formState?.errors?.password} label="Mật khẩu">
+                    <FormControl label="Mật khẩu mới">
                         <InputForm
-                            defaultValue={data.password || ''}
-                            name="password"
-                            id="password"
+                            defaultValue={''}
+                            name="new_password"
+                            id="new_password"
                             type="text"
-                            placeholder="Mật khẩu"
+                            placeholder="Mật khẩu mới"
                         />
                     </FormControl>
                     <FormControl
@@ -177,7 +175,7 @@ const EditStaff = ({ data, departments }: Props) => {
                         </select>
                     </FormControl>
 
-                    <div className="col-span-2">
+                    <div className="col-span-1 md:col-span-2">
                         <Button aria-disabled={formPending} variant={formPending ? 'pending' : 'default'} type="submit">
                             {formPending ? 'Đang gửi...' : 'Sửa'}
                         </Button>

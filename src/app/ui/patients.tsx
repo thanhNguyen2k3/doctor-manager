@@ -4,18 +4,19 @@ import CreateButton from '@/components/create-button';
 import DataTable from '@/components/data-table';
 import { formatDate } from '@/lib/format-date';
 import { GridColDef } from '@mui/x-data-grid';
-import { Patient } from '@prisma/client';
+import { Patient, User } from '@prisma/client';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 import { IoEyeOutline, IoSearchOutline } from 'react-icons/io5';
-import { LiaEditSolid, LiaTrashAlt } from 'react-icons/lia';
+import { LiaEditSolid } from 'react-icons/lia';
 
 type Props = {
     data: Patient[];
+    dataUser?: User | null;
 };
 
-const Patients = ({ data }: Props) => {
+const Patients = ({ data, dataUser }: Props) => {
     const columns: GridColDef<(typeof data)[number]>[] = [
         {
             field: 'name',
@@ -41,9 +42,13 @@ const Patients = ({ data }: Props) => {
             renderCell: ({ row }) => {
                 return (
                     <div className="flex items-center h-full gap-x-1">
-                        <Link href={`/patients/${row.id}`}>
-                            <LiaEditSolid color="#00c9cf" fontSize={26} />
-                        </Link>
+                        {(dataUser?.role === 'admin' ||
+                            dataUser?.role === 'manager' ||
+                            dataUser?.role === 'doctor') && (
+                            <Link href={`/patients/${row.id}`}>
+                                <LiaEditSolid color="#00c9cf" fontSize={26} />
+                            </Link>
+                        )}
                         <Link href={`/patients/${row.id}/view`}>
                             <IoEyeOutline className="text-secondary" fontSize={26} />
                         </Link>
@@ -70,7 +75,9 @@ const Patients = ({ data }: Props) => {
     return (
         <div className="bg-white p-4">
             <div>
-                <CreateButton to="/patients/new">Thêm bệnh nhân</CreateButton>
+                {(dataUser?.role === 'doctor' || dataUser?.role === 'manager' || dataUser?.role === 'admin') && (
+                    <CreateButton to="/patients/new">Thêm bệnh nhân</CreateButton>
+                )}
                 <h1 className="text-xl font-semibold">Bệnh nhân</h1>
                 <div className="w-1/2 my-4 border border-gray-400 rounded-sm flex items-center max-w-full px-2">
                     <button>

@@ -38,10 +38,10 @@ const EditAppointment = ({ doctors, patients, data }: Props) => {
     });
 
     return (
-        <div className="bg-white shadow shadow-primary w-[1200px] mx-auto max-w-full p-6">
+        <div className="bg-white shadow shadow-primary mx-auto max-w-full p-6">
             <BackButton />
             <h1 className="text-[17px] font-semibold mb-5">Sửa cuộc hẹn</h1>
-            <form action={action} className="grid grid-cols-2 gap-x-3 gap-y-3">
+            <form action={action} className="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
                 <input hidden name="appointment_id" id="appointment_id" defaultValue={data?.id} />
                 <FormControl errorField={state?.errors?.doctor_id} label="Bác sĩ">
                     <Select
@@ -116,7 +116,7 @@ const EditAppointment = ({ doctors, patients, data }: Props) => {
                         />
                     </FormControl>
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-1 md:col-span-2">
                     <Button type="submit" aria-disabled={pending} variant={pending ? 'pending' : 'default'}>
                         {pending ? 'Đang gửi...' : 'Sửa'}
                     </Button>

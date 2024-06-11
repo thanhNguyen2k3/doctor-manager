@@ -40,7 +40,7 @@ const NewStaff = ({ departments }: Props) => {
         <div className="bg-white p-6">
             <BackButton />
             <h1 className="text-[17px] font-semibold mb-5">Thêm nhân viên</h1>
-            <div className="grid grid-cols-2 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 mb-4 gap-y-1">
                 <div className="border border-dashed border-gray-400 w-[200px] h-auto p-4">
                     <Image
                         src={!url ? '/doctor.png' : `/uploads/${url}`}
@@ -51,7 +51,7 @@ const NewStaff = ({ departments }: Props) => {
                     />
                 </div>
 
-                <form action={action} className="flex mb-4 border-gray-400 p-4 max-w-full">
+                <form action={action} className="flex mb-4 border-gray-400 max-w-full">
                     <FormControl label="Ảnh đại diện">
                         <div className="flex flex-col gap-y-3">
                             <InputForm type="file" name="image" id="image" />
@@ -65,7 +65,7 @@ const NewStaff = ({ departments }: Props) => {
                 </form>
             </div>
             <form action={formAction}>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
                     <input name="image" id="image" hidden value={url} defaultValue={''} />
                     <FormControl errorField={formState?.errors?.first_name!} label="Họ của bạn">
                         <InputForm name="first_name" id="first_name" placeholder="Họ của bác sĩ" />
@@ -126,7 +126,7 @@ const NewStaff = ({ departments }: Props) => {
                         </select>
                     </FormControl>
 
-                    <div className="col-span-2">
+                    <div className="col-span-1 md:col-span-2">
                         <Button aria-disabled={formPending} variant={formPending ? 'pending' : 'default'} type="submit">
                             {formPending ? 'Đang gửi...' : 'Tạo mới'}
                         </Button>

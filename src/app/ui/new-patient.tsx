@@ -14,7 +14,7 @@ const NewPatient = () => {
         <div className="bg-white shadow  p-6">
             <BackButton />
             <h1 className="text-[17px] font-semibold mb-5">Thêm bệnh nhân</h1>
-            <form action={action} className="grid grid-cols-2 gap-x-3 gap-y-3">
+            <form action={action} className="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
                 <FormControl errorField={state?.errors?.name} label="Tên bệnh nhân">
                     <InputForm type="text" id="name" name="name" />
                 </FormControl>
@@ -47,7 +47,7 @@ const NewPatient = () => {
                     <InputForm type="text" id="disease" name="disease" />
                 </FormControl>
 
-                <div className="col-span-2">
+                <div className="col-span-1 md:col-span-2">
                     <Button type="submit" aria-disabled={pending} variant={pending ? 'pending' : 'default'}>
                         {pending ? 'Đang gửi...' : 'Tạo mới'}
                     </Button>

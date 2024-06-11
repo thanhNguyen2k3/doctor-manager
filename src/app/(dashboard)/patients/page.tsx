@@ -1,3 +1,4 @@
+import { authenticatedData } from '@/app/actions/authenticated';
 import Patients from '@/app/ui/patients';
 import { db } from '@/lib/db';
 
@@ -29,7 +30,9 @@ const Page = async ({ searchParams: { q } }: SearchParamProps) => {
         },
     });
 
-    return <Patients data={data} />;
+    const dataUser = await authenticatedData();
+
+    return <Patients dataUser={dataUser!} data={data} />;
 };
 
 export default Page;

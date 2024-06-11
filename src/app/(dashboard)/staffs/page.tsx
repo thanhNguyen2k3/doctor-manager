@@ -1,3 +1,4 @@
+import { authenticatedData } from '@/app/actions/authenticated';
 import Staffs from '@/app/ui/staffs';
 import { db } from '@/lib/db';
 
@@ -40,7 +41,9 @@ const Page = async ({ searchParams: { q } }: SearchParamProps) => {
         },
     });
 
-    return <Staffs staffs={staffs} />;
+    const data = await authenticatedData();
+
+    return <Staffs dataUser={data} staffs={staffs} />;
 };
 
 export default Page;

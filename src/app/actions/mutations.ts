@@ -5,9 +5,12 @@ import {
     FormAppointmentState,
     FormCreateState,
     FormPatientState,
+    FormProfileState,
     appointmentSchema,
+    doctorEditSchema,
     doctorSchema,
     patientSchema,
+    profileSchema,
 } from '@/lib/definitions';
 import bcriptsjs from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
@@ -148,11 +151,11 @@ export const createStaff = async (state: FormCreateState, formData: FormData) =>
 export const editStaff = async (formState: FormCreateState, formData: FormData) => {
     const user_id = formData.get('user_id');
 
-    const validatedFields = doctorSchema.safeParse({
+    const validatedFields = doctorEditSchema.safeParse({
         userId: user_id,
         image: formData.get('image'),
         email: formData.get('email'),
-        password: formData.get('password'),
+        new_password: formData.get('new_password'),
         first_name: formData.get('first_name'),
         last_name: formData.get('last_name'),
         date_of_birth: formData.get('date_of_birth'),
@@ -168,10 +171,10 @@ export const editStaff = async (formState: FormCreateState, formData: FormData) 
         };
     }
 
-    const { email, password, image, first_name, last_name, date_of_birth, gender, join_date, department_id, role } =
+    const { email, image, first_name, last_name, new_password, date_of_birth, gender, join_date, department_id, role } =
         validatedFields.data;
 
-    const hashedPassword = await bcriptsjs.hash(password, 10);
+    const hashedPassword = await bcriptsjs.hash(new_password, 10);
 
     const data = await db.user.update({
         where: {
@@ -180,7 +183,7 @@ export const editStaff = async (formState: FormCreateState, formData: FormData) 
         data: {
             image,
             email,
-            password: hashedPassword,
+            password: new_password ? hashedPassword : undefined,
             first_name,
             last_name,
             gender,
@@ -208,11 +211,11 @@ export const editStaff = async (formState: FormCreateState, formData: FormData) 
 export const editDoctor = async (formState: FormCreateState, formData: FormData) => {
     const user_id = formData.get('user_id');
 
-    const validatedFields = doctorSchema.safeParse({
+    const validatedFields = doctorEditSchema.safeParse({
         userId: user_id,
         image: formData.get('image'),
         email: formData.get('email'),
-        password: formData.get('password'),
+        new_password: formData.get('new_password'),
         first_name: formData.get('first_name'),
         last_name: formData.get('last_name'),
         date_of_birth: formData.get('date_of_birth'),
@@ -228,10 +231,10 @@ export const editDoctor = async (formState: FormCreateState, formData: FormData)
         };
     }
 
-    const { email, password, image, first_name, last_name, date_of_birth, gender, join_date, department_id, role } =
+    const { email, new_password, image, first_name, last_name, date_of_birth, gender, join_date, department_id, role } =
         validatedFields.data;
 
-    const hashedPassword = await bcriptsjs.hash(password, 10);
+    const hashedPassword = await bcriptsjs.hash(new_password, 10);
 
     const data = await db.user.update({
         where: {
@@ -240,7 +243,7 @@ export const editDoctor = async (formState: FormCreateState, formData: FormData)
         data: {
             image,
             email,
-            password: hashedPassword,
+            password: new_password ? hashedPassword : undefined,
             first_name,
             last_name,
             gender,
@@ -478,4 +481,63 @@ export const editPatient = async (formState: FormPatientState, formData: FormDat
 
     revalidatePath(`/patients/${patient_id}`);
     redirect('/patients');
+};
+
+export const editProfile = async (formState: FormProfileState, formData: FormData) => {
+    const profile_id = formData.get('profile_id');
+
+    const validatedFields = profileSchema.safeParse({
+        profile_id: profile_id,
+        image: formData.get('image'),
+        email: formData.get('email'),
+        new_password: formData.get('new_password'),
+        first_name: formData.get('first_name'),
+        last_name: formData.get('last_name'),
+        date_of_birth: formData.get('date_of_birth'),
+        gender: formData.get('gender'),
+        phone: formData.get('phone'),
+        address: formData.get('address'),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+        };
+    }
+
+    const { email, image, new_password, first_name, last_name, date_of_birth, gender, phone, address } =
+        validatedFields.data;
+
+    const hashedPassword = await bcriptsjs.hash(new_password, 10);
+
+    const data = await db.user.update({
+        where: {
+            id: profile_id?.toString()!,
+        },
+        data: {
+            image,
+            email,
+            password: new_password ? hashedPassword : undefined,
+            first_name,
+            last_name,
+            date_of_birth: new Date(date_of_birth),
+            gender,
+            phone,
+            address,
+        },
+    });
+
+    const profile = data;
+
+    if (!profile) {
+        return {
+            message: 'Đã xảy ra lỗi',
+        };
+    }
+
+    revalidatePath(`/profile/${profile_id}`);
+
+    return {
+        message: 'Thay đổi thành công',
+    };
 };

@@ -16,13 +16,17 @@ const DashboardLayout = async ({ children }: Props) => {
             email: session?.user?.email!,
         },
     });
-    if (!session) redirect('/login');
+
+    if (!session) {
+        redirect('/login');
+    }
+
     return (
-        <div className="flex">
+        <div className="flex dark:bg-black">
             <SidebarDashboard />
             <div className="flex-1 w-full">
                 <HeaderDashboard data={data!} />
-                <div className="p-3 bg-[#f0f3fb] flex-1">{children}</div>
+                <div className="p-3 dark:bg-black flex-1">{children}</div>
             </div>
         </div>
     );

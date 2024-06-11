@@ -55,7 +55,8 @@ export const signup = async (state: FormState, formData: FormData) => {
 
 export const authenticate = async (prevState: string | undefined, formData: FormData) => {
     try {
-        await signIn('credentials', formData).then(() => redirect('/dashboard'));
+        await signIn('credentials', formData);
+        redirect('/');
     } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {

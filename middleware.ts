@@ -6,15 +6,17 @@ import { auth } from '@/lib/auth';
 export default NextAuth(authConfig).auth;
 
 export async function middleware(request: NextRequest) {
-    const isAuthenticated = await auth();
+    const authenticated = await auth();
 
-    if (isAuthenticated) {
+    console.log(authenticated);
+
+    if (!authenticated) {
+        return NextResponse.redirect(new URL('/login', request.url));
+    } else {
         return NextResponse.next();
     }
-
-    return NextResponse.redirect(new URL('/login', request.url));
 }
 
 export const config = {
-    matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)', '/:path*'],
+    matcher: ['/:path*'],
 };

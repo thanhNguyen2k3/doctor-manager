@@ -37,7 +37,7 @@ const ProfileMenu = ({ user }: Props) => {
                                 <p className="text-xs">{user.role}</p>
                             </div>
                             <Link
-                                href={'/dashboard'}
+                                href={`/profile/${user.id}`}
                                 className="flex items-center gap-x-1.5 text-[13px] p-[10px] hover:text-primary hover:bg-primary-001 border-b border-form-solid"
                             >
                                 <FaUser />

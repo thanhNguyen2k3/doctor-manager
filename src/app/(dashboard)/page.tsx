@@ -1,15 +1,99 @@
-'use client';
+import FormControl from '@/components/form-control';
+import InputView from '@/components/input-view';
+import { auth } from '@/lib/auth';
+import { db } from '@/lib/db';
+import { formatGender, formatRole } from '@/lib/format-global';
+import Image from 'next/image';
 
-import { logout } from '@/app/actions/auth';
-import ChartUser from '@/components/charts/chart-user';
-import React, { useActionState } from 'react';
+const Page = async () => {
+    const session = await auth();
+    const data = await db.user.findUnique({
+        where: {
+            email: session?.user?.email!,
+        },
+        include: {
+            department: true,
+        },
+    });
 
-type Props = {};
+    return (
+        <div className="bg-white shadow-md shadow-primary p-6">
+            <h1 className="text-[17px] font-semibold mb-5">
+                Bác sĩ :{' '}
+                <span className="text-xl underline">
+                    {data?.first_name} {data?.last_name}
+                </span>
+            </h1>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <div className="col-span-1">
+                    <Image width={200} height={260} src={`/uploads/${data?.image}` || ''} alt="Avatar" />
+                </div>
+                <div className="col-span-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <FormControl label="Họ">
+                        <InputView
+                            defaultValue={data?.first_name || ''}
+                            name="first_name"
+                            id="first_name"
+                            placeholder="Họ của bác sĩ"
+                        />
+                    </FormControl>
+                    <FormControl label="Tên">
+                        <InputView
+                            defaultValue={data?.last_name || ''}
+                            name="last_name"
+                            id="last_name"
+                            placeholder="Tên của bác sĩ"
+                        />
+                    </FormControl>
+                    <FormControl label="Địa chỉ Email">
+                        <InputView
+                            defaultValue={data?.email || ''}
+                            name="email"
+                            id="email"
+                            placeholder="Địa chỉ email của bạn"
+                        />
+                    </FormControl>
 
-const Page = (props: Props) => {
-    const [state, action] = useActionState(logout, undefined);
-
-    return <div>{/* <ChartUser /> */}</div>;
+                    <FormControl label="Ngày tháng năm sinh (Tháng/Ngày/Năm)">
+                        <InputView
+                            defaultValue={data?.date_of_birth!?.toISOString().substring(0, 10)}
+                            type="date"
+                            name="date_of_birth"
+                            id="date_of_birth"
+                        />
+                    </FormControl>
+                    <FormControl label="Giới tính">
+                        <InputView defaultValue={formatGender(data?.gender!)} />
+                    </FormControl>
+                    <FormControl label="Ngày gia nhập">
+                        <InputView
+                            type="date"
+                            name="join_date"
+                            id="join_date"
+                            defaultValue={data?.join_date?.toISOString().substring(0, 10)}
+                        />
+                    </FormControl>
+                    <FormControl label="Chức vụ">
+                        <InputView defaultValue={formatRole(data?.role!)} />
+                    </FormControl>
+                    <FormControl label="Chuyên khoa">
+                        <InputView
+                            type="text"
+                            name="department_id"
+                            id="department_id"
+                            defaultValue={data?.department?.name}
+                        />
+                    </FormControl>
+                    <FormControl label="Số điện thoại">
+                        <InputView type="text" name="phone" id="phone" defaultValue={data?.phone || ''} />
+                    </FormControl>
+                    <FormControl label="Địa chỉ">
+                        <InputView type="text" name="address" id="address" defaultValue={data?.address || ''} />
+                    </FormControl>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default Page;

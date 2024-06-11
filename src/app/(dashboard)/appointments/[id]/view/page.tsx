@@ -22,12 +22,12 @@ const Page = async ({ params: { id } }: Params) => {
     });
 
     return (
-        <div className="bg-white shadow shadow-primary w-[1200px] mx-auto max-w-full p-6">
+        <div className="bg-white shadow shadow-primary mx-auto max-w-full p-6">
             <BackButton />
             <h1 className="text-[17px] font-semibold mb-5">
                 Mã cuộc hẹn : <span className="underline">{data?.appointment_number}</span>
             </h1>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <FormControl label="Bác sĩ">
                     <InputView
                         defaultValue={`${data?.doctor?.first_name} ${data?.doctor?.last_name}`}
@@ -81,7 +81,7 @@ const Page = async ({ params: { id } }: Params) => {
                     />
                 </FormControl>
 
-                <div className="col-span-2">
+                <div className="col-span-1 md:grid-cols-2">
                     <FormControl label="Ghi chú">
                         <textarea
                             disabled

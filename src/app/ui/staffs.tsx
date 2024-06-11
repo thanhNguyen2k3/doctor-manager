@@ -18,9 +18,10 @@ type ExtandDoctors = User & {
 
 type Props = {
     staffs: ExtandDoctors[];
+    dataUser?: User | null;
 };
 
-const Staffs = ({ staffs }: Props) => {
+const Staffs = ({ staffs, dataUser }: Props) => {
     const columns: GridColDef<(typeof staffs)[number]>[] = [
         {
             field: 'image',
@@ -67,9 +68,12 @@ const Staffs = ({ staffs }: Props) => {
             renderCell: ({ row }) => {
                 return (
                     <div className="flex items-center h-full gap-x-1">
-                        <Link href={`/staffs/${row.id}`}>
-                            <LiaEditSolid color="#00c9cf" fontSize={26} />
-                        </Link>
+                        {(dataUser?.role === 'admin' || dataUser?.role === 'manager') && (
+                            <Link href={`/staffs/${row.id}`}>
+                                <LiaEditSolid color="#00c9cf" fontSize={26} />
+                            </Link>
+                        )}
+
                         {row.role !== 'admin' ? null : (
                             <Link href={`/staffs/${row.id}`}>
                                 <LiaTrashAlt color="red" fontSize={26} />
@@ -101,7 +105,9 @@ const Staffs = ({ staffs }: Props) => {
     return (
         <div className="bg-white p-4">
             <div>
-                <CreateButton to="/staffs/new">Thêm nhân viên</CreateButton>
+                {(dataUser?.role === 'manager' || dataUser?.role === 'admin') && (
+                    <CreateButton to="/patients/new">Thêm nhân viên</CreateButton>
+                )}
                 <h1 className="text-xl font-semibold">Nhận viên</h1>
                 <div className="w-1/2 my-4 border border-gray-400 rounded-sm flex items-center max-w-full px-2">
                     <button>

@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { db } from './db';
 import bcryptjs from 'bcryptjs';
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import { redirect } from 'next/navigation';
 
 async function getUser(email: string) {
     try {

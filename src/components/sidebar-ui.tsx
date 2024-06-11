@@ -6,6 +6,7 @@ import { useContext } from 'react';
 import { SidebarToggleContext } from '@/context/provider';
 import { RiComputerLine } from 'react-icons/ri';
 import { FaUser, FaUserDoctor, FaUserInjured } from 'react-icons/fa6';
+import { BsPersonVcardFill } from 'react-icons/bs';
 import { SlEnvolopeLetter } from 'react-icons/sl';
 import Drawer from '@mui/material/Drawer';
 
@@ -18,11 +19,19 @@ const montserrat = Montserrat({ subsets: ['vietnamese'], weight: ['100', '300', 
 
 const sidebar_menu_items = [
     {
+        id: 'menu0',
+        type: 'link',
+        to: '/',
+        title: 'Cá nhân',
+        icon: BsPersonVcardFill,
+        items: [],
+        security: ['admin', 'manager', 'doctor', 'staff'],
+    },
+    {
         id: 'menu1',
         type: 'link',
         to: '/dashboard',
         items: [],
-        extand: false,
         title: 'Bảng điều khiển',
         icon: RiComputerLine,
         security: ['admin', 'manager'],
@@ -123,7 +132,7 @@ const sidebar_menu_items = [
                 type: 'link',
                 to: '/patients/new',
                 title: 'Thêm mới',
-                isSecurity: true,
+                isSecurity: false,
             },
         ],
     },
@@ -187,7 +196,7 @@ const SidebarUi = ({ userData }: Props) => {
                                     ? isAdmin.map((menu) => {
                                           return (
                                               <MenuItem
-                                                  role={menu.security}
+                                                  to={menu.to!}
                                                   userData={userData}
                                                   key={menu.id}
                                                   sidebarOpen={isOpen}
@@ -202,7 +211,7 @@ const SidebarUi = ({ userData }: Props) => {
                                     : userData.role === 'manager'
                                     ? isManager.map((menu) => (
                                           <MenuItem
-                                              role={menu.security}
+                                              to={menu.to!}
                                               userData={userData}
                                               key={menu.id}
                                               sidebarOpen={isOpen}
@@ -217,7 +226,7 @@ const SidebarUi = ({ userData }: Props) => {
                                     ? isDoctor.map((menu) => {
                                           return (
                                               <MenuItem
-                                                  role={menu.security}
+                                                  to={menu.to!}
                                                   userData={userData}
                                                   key={menu.id}
                                                   sidebarOpen={isOpen}
@@ -232,7 +241,7 @@ const SidebarUi = ({ userData }: Props) => {
                                     : isStaff.map((menu) => {
                                           return (
                                               <MenuItem
-                                                  role={menu.security}
+                                                  to={menu.to!}
                                                   userData={userData}
                                                   key={menu.id}
                                                   sidebarOpen={isOpen}

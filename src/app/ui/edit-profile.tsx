@@ -1,33 +1,34 @@
 'use client';
 
-import FormControl from '@/components/form-control';
-import InputForm from '@/components/input-form';
+import BackButton from '@/components/back-button';
+import { Department, User } from '@prisma/client';
+import Image from 'next/image';
 import { useActionState, useState } from 'react';
 import { uploadFile } from '../actions/uploads';
-import Image from 'next/image';
+import { editProfile } from '../actions/mutations';
+import FormControl from '@/components/form-control';
+import InputForm from '@/components/input-form';
 import Button from '@/components/button';
 import Snackbar from '@mui/material/Snackbar';
-import { Department, User } from '@prisma/client';
-import { editDoctor } from '../actions/mutations';
-import BackButton from '@/components/back-button';
 
-type ExtandData = User & {
+type ExtandUser = User & {
     department?: Department | null;
 };
 
 type Props = {
-    data?: ExtandData;
-    departments: Department[];
+    data: ExtandUser | null;
 };
 
-const EditDoctor = ({ data, departments }: Props) => {
+const EditProfile = ({ data }: Props) => {
     const [state, action, pending] = useActionState(uploadFile, undefined);
-    const [formState, formAction, formPending] = useActionState(editDoctor, undefined);
+    const [formState, formAction, formPending] = useActionState(editProfile, undefined);
 
     const [open, setOpen] = useState(false);
+    const [openStatus, setOpenStatus] = useState(false);
 
     const message = state?.message;
     const url = state?.url;
+    const success_message = formState?.message;
 
     const handleClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -35,17 +36,22 @@ const EditDoctor = ({ data, departments }: Props) => {
         }
 
         setOpen(false);
+        setOpenStatus(false);
     };
 
     const handleClick = () => {
         setOpen(true);
     };
 
+    const handleShowStatus = () => {
+        setOpenStatus(true);
+    };
+
     return (
         <div className="bg-white p-6">
             <BackButton />
-            <h1 className="text-[17px] font-semibold mb-5">Sửa bác sĩ</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-1 mb-4">
+            <h1 className="text-[17px] font-semibold mb-5">Trang cá nhân</h1>
+            <div className="grid grid-cols-2 mb-4">
                 <div className="border border-dashed border-gray-400 w-[200px] h-auto p-4">
                     <Image
                         src={url ? `/uploads/${url!}` : `/uploads/${data?.image}`}
@@ -56,7 +62,7 @@ const EditDoctor = ({ data, departments }: Props) => {
                     />
                 </div>
 
-                <form action={action} className="flex mb-4 border-gray-400 max-w-full">
+                <form action={action} className="flex mb-4 border-gray-400 p-4 max-w-full">
                     <FormControl label="Ảnh đại diện">
                         <div className="flex flex-col gap-y-3">
                             <InputForm type="file" name="image" id="image" />
@@ -66,11 +72,13 @@ const EditDoctor = ({ data, departments }: Props) => {
                         </div>
                     </FormControl>
 
-                    <Snackbar open={open} onClose={handleClose} autoHideDuration={6000} message={message} />
+                    {message && (
+                        <Snackbar open={open} onClose={handleClose} autoHideDuration={6000} message={message} />
+                    )}
                 </form>
             </div>
             <form action={formAction}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-4">
                     <input
                         name="image"
                         id="image"
@@ -78,7 +86,7 @@ const EditDoctor = ({ data, departments }: Props) => {
                         value={url ? url : data?.image!}
                         defaultValue={data?.image ? `${data?.image}` : ''}
                     />
-                    <input type="text" value={data?.id!} id="user_id" name="user_id" hidden />
+                    <input type="text" value={data?.id!} id="profile_id" name="profile_id" hidden />
                     <FormControl errorField={formState?.errors?.first_name!} label="Họ của bạn">
                         <InputForm
                             defaultValue={data?.first_name || ''}
@@ -103,13 +111,13 @@ const EditDoctor = ({ data, departments }: Props) => {
                             placeholder="Địa chỉ email của bạn"
                         />
                     </FormControl>
-                    <FormControl label="Mật khẩu mới">
+                    <FormControl errorField={formState?.errors?.new_password} label="Mật khẩu">
                         <InputForm
                             defaultValue={''}
                             name="new_password"
                             id="new_password"
-                            type="text"
-                            placeholder="Mật khẩu mới"
+                            type="password"
+                            placeholder="Mật khẩu"
                         />
                     </FormControl>
                     <FormControl
@@ -135,46 +143,32 @@ const EditDoctor = ({ data, departments }: Props) => {
                             <option value={'orther'}>Giới tính thứ 3</option>
                         </select>
                     </FormControl>
-                    <FormControl errorField={formState?.errors?.join_date} label="Ngày gia nhập">
-                        <InputForm
-                            type="date"
-                            name="join_date"
-                            id="join_date"
-                            defaultValue={data?.join_date?.toISOString().substring(0, 10)}
-                        />
-                    </FormControl>
-                    <FormControl errorField={formState?.errors?.role} label="Chức vụ">
-                        <select
-                            disabled={data?.role === 'manager' || data?.role === 'admin' ? true : false}
-                            defaultValue={data?.role!}
-                            name="role"
-                            id="role"
-                            className="border border-gray-400 w-full outline-none h-[56px] py-3 px-4 rounded"
-                        >
-                            <option value={'staff'}>Nhân viên</option>
-                            <option value={'doctor'}>Bác sĩ</option>
-                            <option value={'intern'}>Bác sĩ thực tập</option>
-                        </select>
-                    </FormControl>
-                    <FormControl errorField={formState?.errors?.department_id} label="Chuyên khoa">
-                        <select
-                            name="department_id"
-                            id="department_id"
-                            defaultValue={data?.department?.id!}
-                            className="border border-gray-400 w-full outline-none h-[56px] py-3 px-4 rounded"
-                        >
-                            <option value={''}>-- Chọn khoa --</option>
-                            {departments.map((department) => (
-                                <option key={department.id} value={department.id}>
-                                    {department.name}
-                                </option>
-                            ))}
-                        </select>
+
+                    <FormControl errorField={formState?.errors?.phone} label="Số điện thoại">
+                        <InputForm defaultValue={data?.phone!} type="text" name="phone" id="phone" />
                     </FormControl>
 
-                    <div className="col-span-1 md:col-span-2">
-                        <Button aria-disabled={formPending} variant={formPending ? 'pending' : 'default'} type="submit">
-                            {formPending ? 'Đang gửi...' : 'Sửa'}
+                    <FormControl errorField={formState?.errors?.address} label="Địa chỉ">
+                        <InputForm defaultValue={data?.address!} type="text" name="address" id="address" />
+                    </FormControl>
+
+                    {success_message && (
+                        <Snackbar
+                            open={openStatus}
+                            onClose={handleClose}
+                            autoHideDuration={6000}
+                            message={success_message}
+                        />
+                    )}
+
+                    <div className="col-span-2">
+                        <Button
+                            onClick={handleShowStatus}
+                            aria-disabled={formPending}
+                            variant={formPending ? 'pending' : 'default'}
+                            type="submit"
+                        >
+                            {formPending ? 'Đang gửi...' : 'Cập nhật'}
                         </Button>
                     </div>
                 </div>
@@ -183,4 +177,4 @@ const EditDoctor = ({ data, departments }: Props) => {
     );
 };
 
-export default EditDoctor;
+export default EditProfile;

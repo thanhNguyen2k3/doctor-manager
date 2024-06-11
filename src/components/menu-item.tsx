@@ -14,10 +14,10 @@ type Props = {
     sidebarOpen: boolean;
     setToggleSidebar: Dispatch<SetStateAction<boolean>>;
     userData: User;
-    role: string[];
+    to?: string;
 };
 
-const MenuItem = ({ label, items, type, icon: Icon, sidebarOpen, setToggleSidebar, userData, role }: Props) => {
+const MenuItem = ({ label, to, items, type, icon: Icon, sidebarOpen, setToggleSidebar, userData }: Props) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggle = () => {
@@ -28,7 +28,7 @@ const MenuItem = ({ label, items, type, icon: Icon, sidebarOpen, setToggleSideba
     if (type === 'link') {
         return (
             <Link
-                href={'/'}
+                href={to!}
                 className={`flex w-full ${
                     !sidebarOpen && `justify-center`
                 } items-center gap-x-2 px-3 py-[10px] hover:bg-sidebar-active rounded`}
